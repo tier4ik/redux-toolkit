@@ -20,6 +20,14 @@ const Navigation = () => {
             Counter Page
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            to={"/posts"}
+            className={({ isActive }) => (isActive ? "active" : undefined)}
+          >
+            Posts Page
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );

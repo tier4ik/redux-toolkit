@@ -8,8 +8,9 @@ import { store } from "./store/store";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import CounterPage from "./pages/CounterPage";
 import RootPage from "./pages/RootPage";
+import CounterPage from "./pages/CounterPage";
+import PostsPage from "./pages/PostsPage";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "/counter",
     element: <CounterPage />,
+  },
+  {
+    path: "/posts",
+    element: <PostsPage />,
   },
 ]);
 

@@ -28,3 +28,16 @@ code {
 .active {
   font-weight: bold;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input,
+textarea,
+button,
+select {
+  font: inherit;
+  margin-bottom: 1em;
+}
