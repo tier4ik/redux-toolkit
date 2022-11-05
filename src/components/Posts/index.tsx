@@ -2,6 +2,8 @@ import { useSelector, TypedUseSelectorHook } from "react-redux";
 import { RootState } from "../../store/store";
 import { selectAllPosts } from "./postsSlice";
 
+import PostAuthor from "./PostAuthor";
+
 import style from "./Posts.module.css";
 
 const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -17,6 +19,7 @@ const Posts = (): JSX.Element => {
           <p className={style.post__content}>
             {post.content.substring(0, 100)}
           </p>
+          <PostAuthor userId={post.authorId} />
         </article>
       ))}
     </section>
