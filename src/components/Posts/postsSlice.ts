@@ -3,12 +3,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { RootState } from "../../store/store";
 
-type PostsStateType = {
+type PostStateType = {
   id: string;
   title: string;
   content: string;
   authorId?: string;
-}[];
+};
 
 const initialState: PostsStateType = [
   {
@@ -28,8 +28,8 @@ const postsSlice = createSlice({
   initialState,
   reducers: {
     postAdded: {
-      reducer: (state, action: PayloadAction<PostsStateType[number]>) => {
-        state.push(action.payload);
+      reducer: (state, action: PayloadAction<PostStateType>) => {
+        state.posts.push(action.payload);
       },
       prepare: (title: string, content: string, authorId: string) => {
         return {
@@ -45,7 +45,8 @@ const postsSlice = createSlice({
   },
 });
 
-export const selectAllPosts = (state: RootState): PostsStateType => state.posts;
+export const selectAllPosts = (state: RootState): PostStateType[] =>
+  state.posts.posts;
 
 export const { postAdded } = postsSlice.actions;
 
