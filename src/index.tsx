@@ -12,6 +12,9 @@ import RootPage from "./pages/RootPage";
 import CounterPage from "./pages/CounterPage";
 import PostsPage from "./pages/PostsPage";
 
+import { fetchUsers } from "./components/users/usersSlice";
+store.dispatch(fetchUsers());
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,11 +34,11 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

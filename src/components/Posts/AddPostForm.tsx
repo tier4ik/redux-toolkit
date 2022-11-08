@@ -3,7 +3,8 @@ import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 
 import { AppDispatch, RootState } from "../../store/store";
 
-import { postAdded } from "./postsSlice";
+// import { postAdded } from "./postsSlice";
+import { addNewPost } from "./postsSlice";
 import { selectAllUsers } from "../users/usersSlice";
 
 const useAppDispatch: () => AppDispatch = useDispatch;
@@ -13,8 +14,13 @@ const AddPostForm = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
-
+  const [addRequestStatus, setAddRequestStatus] = useState<"idle" | "pending">(
+    "idle"
+  );
   const users = useAppSelector(selectAllUsers);
+
+  const isDisabled =
+    [title, content, userId].every(Boolean) && addRequestStatus === "idle";
 
   const dispatch = useAppDispatch();
 
@@ -27,13 +33,21 @@ const AddPostForm = () => {
   const onAuthorChanged: React.ChangeEventHandler<HTMLSelectElement> = (e) =>
     setUserId(e.currentTarget.value);
 
-  const isDisabled = Boolean(title) && Boolean(content) && Boolean(userId);
-
   const onSavePostClicked = () => {
-    if (title && content) {
-      dispatch(postAdded(title, content, userId));
-      setTitle("");
-      setContent("");
+    if (isDisabled) {
+      try {
+        setAddRequestStatus("pending");
+        dispatch(
+          addNewPost({ title, content, authorId: userId, id: "" })
+        ).unwrap();
+        setTitle("");
+        setContent("");
+        setUserId("");
+      } catch (err) {
+        console.error("Failed to save new post", err);
+      } finally {
+        setAddRequestStatus("idle");
+      }
     }
   };
 
