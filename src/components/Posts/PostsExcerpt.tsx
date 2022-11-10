@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { PostStateType } from "./postsSlice";
 import PostAuthor from "./PostAuthor";
 
@@ -17,6 +18,8 @@ const PostsExcerpt: React.FC<Props> = ({ post }) => {
           : post.content}
       </p>
       <PostAuthor userId={post.authorId} />
+      <br />
+      <Link to={`/posts/${post.id}`}>View post</Link>
     </article>
   );
 };

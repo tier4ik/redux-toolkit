@@ -11,8 +11,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootPage from "./pages/RootPage";
 import CounterPage from "./pages/CounterPage";
 import PostsPage from "./pages/PostsPage";
+import SinglePostPage from "./pages/SinglePostPage";
+import EditPostForm from "./components/Posts/EditPostForm";
 
 import { fetchUsers } from "./components/users/usersSlice";
+
 store.dispatch(fetchUsers());
 
 const router = createBrowserRouter([
@@ -27,6 +30,14 @@ const router = createBrowserRouter([
   {
     path: "/posts",
     element: <PostsPage />,
+  },
+  {
+    path: "/posts/:id",
+    element: <SinglePostPage />,
+  },
+  {
+    path: "/post/edit/:id",
+    element: <EditPostForm />,
   },
 ]);
 

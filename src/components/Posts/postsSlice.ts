@@ -1,9 +1,4 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  nanoid,
-  AsyncThunkPayloadCreator,
-} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, nanoid } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { RootState } from "../../store/store";
@@ -63,8 +58,11 @@ export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
   async (initialPost: PostStateType) => {
     const response = await fetch(POSTS_URL, {
-      method: "post",
+      method: "POST",
       body: JSON.stringify(initialPost),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
     });
     if (!response.ok) {
       return Promise.reject("Something went wrong");
@@ -74,6 +72,51 @@ export const addNewPost = createAsyncThunk(
       ...initialPost,
       id: newId.id,
     };
+  }
+);
+
+export const updatePost = createAsyncThunk(
+  "posts/updatePost",
+  async (updatedPost: PostStateType) => {
+    const { id, title, content, authorId } = updatedPost;
+    const response = await fetch(
+      `https://jsonplaceholder.typicode.com/posts/${id}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          id,
+          title,
+          content,
+          authorId: Number(authorId),
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      }
+    );
+    if (!response.ok) {
+      return Promise.reject("Something went wrong");
+    }
+    return await response.json();
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (postId: string) => {
+    const response = await fetch(
+      `https://jsonplaceholder.typicode.com/posts/${postId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!response.ok) {
+      return Promise.reject("Something went wrong");
+    }
+    if (response.status !== 200) {
+      return Promise.reject(`${response.status}: ${response.statusText}`);
+    }
+    return postId;
   }
 );
 
@@ -108,7 +151,7 @@ const postsSlice = createSlice({
           state.status = "succeeded";
           const newPosts = action.payload.map((post) => {
             return {
-              id: post.id,
+              id: String(post.id),
               title: post.title,
               content: post.body,
               authorId: post.userId,
@@ -124,16 +167,30 @@ const postsSlice = createSlice({
       .addCase(
         addNewPost.fulfilled,
         (state, action: PayloadAction<PostStateType>) => {
-          console.log("====================================");
-          console.log(action.payload);
-          console.log("====================================");
           state.posts.unshift(action.payload);
         }
-      );
+      )
+      .addCase(
+        updatePost.fulfilled,
+        (state, action: PayloadAction<PostStateType>) => {
+          const post = state.posts.find(
+            (post) => post.id === action.payload.id
+          )!;
+          post.title = action.payload.title;
+          post.content = action.payload.content;
+          post.authorId = action.payload.authorId;
+        }
+      )
+      .addCase(deletePost.fulfilled, (state, action) => {
+        state.posts = state.posts.filter((post) => post.id !== action.payload);
+      });
   },
 });
 
 export const selectAllPosts = (state: RootState) => state.posts.posts;
+export const selectPostById = (state: RootState, id: string | undefined) =>
+  state.posts.posts.find((p) => p.id === id);
+
 export const getPostsStatus = (state: RootState) => state.posts.status;
 export const getPostsError = (state: RootState) => state.posts.error;
 
